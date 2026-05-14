@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AdriLar - O Chão de Fábrica Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1526;color:#fff;font-family:'Inter',sans-serif;overflow:hidden;height:100vh}
+.slide{display:none;width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide.active{display:flex;flex-direction:column;justify-content:center;align-items:center}
+.bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(245,197,24,0.04)1px,transparent 1px),linear-gradient(90deg,rgba(245,197,24,0.04)1px,transparent 1px);background-size:50px 50px;pointer-events:none}
+.circuit{position:absolute;bottom:0;left:0;right:0;height:100px;background:repeating-linear-gradient(90deg,transparent,transparent 50px,rgba(245,197,24,0.06)50px,rgba(245,197,24,0.06)51px)}
+.neon-box{border:2px solid #f5c518;box-shadow:0 0 25px rgba(245,197,24,0.35),inset 0 0 25px rgba(245,197,24,0.04)}
+.cover-title{padding:45px 65px;max-width:850px;text-align:center;position:relative;z-index:2}
+.cover-title::before{content:'';position:absolute;top:-3px;left:-3px;width:28px;height:28px;border-top:3px solid #f5c518;border-left:3px solid #f5c518}
+.cover-title::after{content:'';position:absolute;bottom:-3px;right:-3px;width:28px;height:28px;border-bottom:3px solid #f5c518;border-right:3px solid #f5c518}
+.date-tag{background:#f5c518;color:#0d1526;padding:7px 20px;font-weight:900;font-size:.95rem;display:inline-block;margin-bottom:18px}
+h1.main{font-size:3.8rem;font-weight:900;line-height:1.05;color:#fff}
+.cover-sub{font-size:1.35rem;color:rgba(255,255,255,.72);margin-top:18px;font-weight:400}
+.glow-dot{width:14px;height:14px;background:#f5c518;border-radius:50%;display:inline-block;box-shadow:0 0 14px rgba(245,197,24,.9)}
+.slide-header{position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,#162040,#0d1526);padding:18px 40px;border-bottom:2px solid #f5c518;display:flex;align-items:center;gap:14px;z-index:10}
+.mod-tag{background:#f5c518;color:#0d1526;padding:4px 12px;font-weight:900;font-size:.8rem;letter-spacing:1px}
+.slide-header h2{font-size:1.6rem;color:#f5c518;font-weight:800}
+.content{width:100%;max-width:1180px;padding:20px 40px;margin-top:70px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(245,197,24,.25);border-radius:3px;padding:20px;transition:all .25s}
+.card:hover{border-color:#f5c518;box-shadow:0 0 18px rgba(245,197,24,.18)}
+.card h3{color:#f5c518;font-size:.9rem;font-weight:800;margin-bottom:10px;text-transform:uppercase;letter-spacing:1.2px}
+.card p{font-size:.84rem;color:rgba(255,255,255,.72);line-height:1.55}
+.card .icon{font-size:1.8rem;margin-bottom:10px}
+.badge{display:inline-block;padding:3px 10px;font-size:.72rem;font-weight:700;border-radius:2px;margin-bottom:8px;letter-spacing:.5px}
+.by{background:rgba(245,197,24,.18);color:#f5c518;border:1px solid rgba(245,197,24,.5)}
+.bg{background:rgba(34,197,94,.18);color:#22c55e;border:1px solid rgba(34,197,94,.5)}
+.bb{background:rgba(59,130,246,.18);color:#60a5fa;border:1px solid rgba(59,130,246,.5)}
+.br{background:rgba(239,68,68,.18);color:#f87171;border:1px solid rgba(239,68,68,.5)}
+.bp{background:rgba(168,85,247,.18);color:#c084fc;border:1px solid rgba(168,85,247,.5)}
+.flow{display:flex;flex-direction:column;gap:8px}
+.step{display:flex;align-items:center;gap:12px;padding:11px 18px;background:rgba(255,255,255,.04);border-left:3px solid #f5c518}
+.step .n{background:#f5c518;color:#0d1526;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;flex-shrink:0}
+.step p{font-size:.87rem;color:rgba(255,255,255,.85)}
+.tip{background:rgba(245,197,24,.07);border:1px solid rgba(245,197,24,.35);border-radius:3px;padding:14px 20px;margin-top:16px}
+.tip strong{color:#f5c518;font-size:.85rem}
+.tip p{font-size:.82rem;color:rgba(255,255,255,.7);margin-top:4px;line-height:1.5}
+.intro{background:rgba(22,32,64,.7);border:1px solid rgba(245,197,24,.18);padding:14px 22px;margin-bottom:18px;border-radius:2px}
+.intro p{font-size:.92rem;color:rgba(255,255,255,.72);line-height:1.6}
+.stat{text-align:center;padding:22px 10px}
+.stat .num{font-size:2.2rem;font-weight:900;color:#f5c518;display:block;line-height:1}
+.stat .lbl{font-size:.78rem;color:rgba(255,255,255,.55);margin-top:6px;text-transform:uppercase;letter-spacing:.8px}
+.mockup{background:rgba(13,21,38,.9);border:1px solid rgba(245,197,24,.28);border-radius:3px;padding:0;overflow:hidden}
+.mockup-hd{background:rgba(245,197,24,.1);border-bottom:1px solid rgba(245,197,24,.2);padding:8px 14px}
+.mockup-hd span{color:#f5c518;font-size:.76rem;font-weight:800;text-transform:uppercase;letter-spacing:1px}
+.mockup-body{padding:14px}
+.frow{display:flex;gap:8px;margin-bottom:8px}
+.field{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);padding:7px 10px;font-size:.78rem;color:rgba(255,255,255,.55);border-radius:2px}
+.btn-y{background:#f5c518;color:#0d1526;padding:7px 16px;font-weight:900;font-size:.78rem;cursor:pointer;border:none}
+.menu-list{display:flex;flex-direction:column;gap:0}
+.mitem{display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.mitem .ico{color:#f5c518;font-size:1rem;width:18px;text-align:center}
+.mitem span{font-size:.85rem;color:rgba(255,255,255,.78)}
+.mitem.active{background:rgba(245,197,24,.1)}
+.nav{position:fixed;bottom:25px;right:35px;display:flex;gap:8px;z-index:200}
+.nav button{background:rgba(245,197,24,.14);border:1px solid #f5c518;color:#f5c518;padding:9px 18px;cursor:pointer;font-size:.88rem;font-weight:700;transition:all .2s;font-family:inherit}
+.nav button:hover{background:#f5c518;color:#0d1526}
+.ctr{position:fixed;bottom:33px;left:35px;font-size:.82rem;color:rgba(255,255,255,.38);z-index:200}
+.pbar{position:fixed;top:0;left:0;height:3px;background:#f5c518;transition:width .3s;z-index:300;box-shadow:0 0 10px rgba(245,197,24,.8)}
+.kst{display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);padding:2px 8px;border-radius:3px;font-size:.78rem;font-family:monospace;color:rgba(255,255,255,.8)}
+</style>
+</head>
+<body>
+<div class="pbar" id="pbar"></div>
+<!-- SLIDE 1: CAPA -->
+<div class="slide active" id="s1">
+  <div class="bg-grid"></div>
+  <div class="circuit"></div>
+  <div style="position:absolute;top:60px;right:60px;opacity:.15;font-size:5rem;font-weight:900;color:#f5c518;letter-spacing:-5px">ADRILAR</div>
+  <div class="cover-title neon-box" style="border:2px solid #f5c518">
+    <span class="date-tag">13/05/2026</span>
+    <h1 class="main">O Chão de<br>Fábrica Digital</h1>
+    <p class="cover-sub">Guia Visual do Sistema AdriLar:<br>Módulo de Estoque e Separação</p>
+  </div>
+  <div style="position:absolute;bottom:50px;left:50%;transform:translateX(-50%);text-align:center;opacity:.5;font-size:.78rem;letter-spacing:2px;text-transform:uppercase">12 módulos documentados</div>
+</div>
+
+<!-- SLIDE 2: VISÃO GERAL DO SISTEMA -->
+<div class="slide" id="s2">
+  <div class="bg-grid"></div>
+  <div class="slide-header">
+    <span class="mod-tag">VISÃO GERAL</span>
+    <h2>O Ecossistema AdriLar</h2>
+  </div>
+  <div class="content">
+    <div class="intro"><p>O sistema AdriLar é organizado em <strong style="color:#f5c518">13 módulos</strong> que cobrem o ciclo completo de estoque: desde a entrada de produtos até a expedição e conferência. Todo o fluxo é gerenciado em tempo real.</p></div>
+    <div class="grid3">
+      <div class="card">
+        <span class="badge by">CORE</span>
+        <h3>📊 Dashboard</h3>
+        <p>Visão geral com contadores em tempo real: pedidos Aguardando, Em Separação, Separados e Cancelados.</p>
+      </div>
+      <div class="card">
+        <span class="badge bb">OPERAÇÃO</span>
+        <h3>📦 Separação</h3>
+        <p>Módulo principal de operação. Filtra pedidos por vendedor e rota para iniciar o processo de separação.</p>
+      </div>
+      <div class="card">
+        <span class="badge br">GESTÃO</span>
+        <h3>❌ Cancelamentos</h3>
+        <p>Gerencia pedidos com solicitação de cancelamento, permitindo revisão e processamento individual.</p>
+      </div>
+      <div class="card">
+        <span class="badge bp">PEDIDOS</span>
+        <h3>📋 Reposição</h3>
+        <p>Lista completa de pedidos com filtros de status (Separado, Expedição) e tipo (Pré-Venda, Bonificação, Reposição).</p>
+      </div>
+      <div class="card">
+        <span class="badge bg">CONFERÊNCIA</span>
+        <h3>✅ Conferência</h3>
+        <p>Histórico de conferências por vendedor e rota. Registra reposições de caminhão e pedidos de clientes.</p>
+      </div>
+      <div class="card">
+        <span class="badge by">LOGÍSTICA</span>
+        <h3>📄 Romaneio</h3>
+        <p>Gera documento de romaneio de entrega por expedição. Lista pedidos agrupados por cliente para assinatura.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: MAIS MÓDULOS -->
+<div class="slide" id="s3">
+  <div class="bg-grid"></div>
+  <div class="slide-header">
+    <span class="mod-tag">VISÃO GERAL</span>
+    <h2>Módulos de Estoque e Logística</h2>
+  </div>
+  <div class="content">
+    <div class="grid3">
+      <div class="card">
+        <span class="badge br">DEVOLUÇÕES</span>
+        <h3>🔄 Devoluções de Caminhão</h3>
+        <p>Registra e gerencia devoluções de produtos retornados no caminhão. Filtros por vendedor e status (Fechado).</p>
+      </div>
+      <div class="card">
+        <span class="badge bb">EXPEDIÇÃO</span>
+        <h3>🚚 Expedição de Rota</h3>
+        <p>Gerencia o carregamento de pedidos conferidos no caminhão por rota. Status: Em Trânsito, Finalizada.</p>
+      </div>
+      <div class="card">
+        <span class="badge bg">ENTRADAS</span>
+        <h3>📥 Entradas de Estoque</h3>
+        <p>Registra e gerencia entradas de produtos no estoque geral. Status: Pendente, Finalizado. Vinculado à empresa.</p>
+      </div>
+      <div class="card">
+        <span class="badge by">CONTAGEM</span>
+        <h3>🔢 Contagem de Estoque</h3>
+        <p>Registra e compara a quantidade física com o saldo do sistema. Status: Aberta, Finalizada.</p>
+      </div>
+      <div class="card">
+        <span class="badge bp">SAÍDAS</span>
+        <h3>📤 Saídas Diversas</h3>
+        <p>Registra doações e distribuições internas com baixa imediata no estoque. Filtra por tipo e empresa.</p>
+      </div>
+      <div class="card">
+        <span class="badge bb">TRANSFERÊNCIA</span>
+        <h3>↔️ Transferências</h3>
+        <p>Gerencia transferências de estoque entre empresas. Status: Em Trânsito, Aguardando. Ex: GOIAS → MATO GROSSO.</p>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div class="card">
+        <span class="badge by">IMPRESSÃO</span>
+        <h3>🏷️ Reimpr. Etiqueta</h3>
+        <p>Reimprime etiquetas de separações já realizadas. Lista pedidos separados com opção de reimprimir rapidamente.</p>
+      </div>
+      <div class="card">
+        <span class="badge bg">FERRAMENTA</span>
+        <h3>📷 Ler QR Code</h3>
+        <p>Ferramenta para leitura de QR Code no chão de fábrica. Integrada ao fluxo de separação e conferência.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- SLIDE 4: DASHBOARD -->
+<div class="slide" id="s4">
+  <div class="bg-grid"></div>
+  <div class="slide-header">
+    <span class="mod-tag">MÓDULO 1</span>
+    <h2>Dashboard — Visão Geral</h2>
+  </div>
+  <div class="content">
+    <div class="intro"><p>A tela inicial do sistema. Exibe <strong style="color:#f5c518">4 contadores em tempo real</strong> com o status dos pedidos do dia. Possui acesso rápido aos principais módulos via 2 botões de ação.</p></div>
+    <div class="grid2">
+      <div>
+        <div class="grid2" style="margin-bottom:16px">
+          <div class="card stat">
+            <span class="badge by">AGUARDANDO</span>
+            <span class="num">0</span>
+            <div class="lbl">pedidos na fila</div>
+          </div>
+          <div class="card stat">
+            <span class="badge bb">EM SEPARAÇÃO</span>
+            <span class="num">0</span>
+            <div class="lbl">em andamento</div>
+          </div>
+          <div class="card stat">
+            <span class="badge bg">SEPARADOS</span>
+            <span class="num">18</span>
+            <div class="lbl">pedidos concluídos</div>
+          </div>
+          <div class="card stat">
+            <span class="badge br">CANCELADOS</span>
+            <span class="num">15</span>
+            <div class="lbl">pedidos cancelados</div>
+          </div>
+        </div>
+        <div class="tip"><strong>💡 Dica Rápida</strong><p>Os contadores atualizam automaticamente. O botão <span class="kst">Iniciar Separação</span> leva direto para o módulo de separação.</p></div>
+      </div>
+      <div>
+        <div class="mockup">
+          <div class="mockup-hd"><span>Dashboard — Acesso Rápido</span></div>
+          <div class="mockup-body">
+            <div style="background:linear-gradient(90deg,rgba(22,32,64,.9),rgba(13,21,38,.9));padding:18px;margin-bottom:12px;border-radius:2px;border:1px solid rgba(245,197,24,.15)">
+              <div style="color:rgba(245,197,24,.8);font-size:.78rem;font-weight:700">Boa tarde,</div>
+              <div style="font-size:1.4rem;font-weight:900;color:#fff">Jeferson!</div>
+              <div style="font-size:.76rem;color:rgba(255,255,255,.5);margin-top:4px">quarta-feira, 13 de maio de 2026</div>
+              <div style="display:flex;gap:8px;margin-top:14px">
+                <div style="background:#f5c518;color:#0d1526;padding:7px 14px;font-weight:900;font-size:.76rem">▶ Iniciar Separação</div>
+                <div style="border:1px solid rgba(245,197,24,.4);color:rgba(255,255,255,.7);padding:7px 14px;font-size:.76rem">⊗ Cancelamentos</div>
+              </div>
+            </div>
+            <div style="font-size:.76rem;color:rgba(255,255,255,.45);text-align:center">Atualização automática a cada ciclo</div>
+          </div>
+        </div>
+        <div class="tip" style="margin-top:12px"><strong>🔔 Notificações</strong><p>O sino no canto superior direito exibe alertas do sistema. O número amarelo indica notificações pendentes.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: SEPARAÇÃO -->
+<div class="slide" id="s5">
+  <div class="bg-grid"></div>
+  <div class="slide-header">
+    <span class="mod-tag">MÓDULO 2</span>
+    <h2>Separação — O Coração do Processo</h2>
+  </div>
+  <div class="content">
+    <div class="intro"><p>Módulo principal de operação. O estoquista seleciona o <strong style="color:#f5c518">vendedor e a rota</strong> para visualizar pedidos aguardando separação e separações em andamento.</p></div>
+    <div class="grid2">
+      <div>
+        <div class="mockup">
+          <div class="mockup-hd"><span>Filtros de Separação</span></div>
+          <div class="mockup-body">
+            <div style="font-size:.76rem;color:rgba(255,255,255,.5);margin-bottom:6px">Vendedor</div>
+            <div class="frow" style="margin-bottom:14px">
+              <div class="field">WCLAYTON ▾</div>
+            </div>
+            <div style="font-size:.76rem;color:rgba(255,255,255,.5);margin-bottom:6px">Rota</div>
+            <div class="frow">
+              <div class="field">Todas as rotas ▾</div>
+              <div class="btn-y">🔍 Consultar</div>
+            </div>
+            <div style="margin-top:16px;border-top:1px solid rgba(255,255,255,.08);padding-top:14px">
+              <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:8px">ROTAS DISPONÍVEIS</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <span style="background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);padding:3px 8px;font-size:.72rem;color:rgba(255,255,255,.7)">CATALÃO</span>
+                <span style="background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);padding:3px 8px;font-size:.72rem;color:rgba(255,255,255,.7)">JATAÍ</span>
+                <span style="background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);padding:3px 8px;font-size:.72rem;color:rgba(255,255,255,.7)">MINEIROS</span>
+                <span style="background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);padding:3px 8px;font-size:.72rem;color:rgba(255,255,255,.7)">FORMOSA</span>
+                <span style="background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);padding:3px 8px;font-size:.72rem;color:rgba(255,255,255,.7)">+6 mais</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flow">
+        <div style="font-size:.8rem;color:#f5c518;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Fluxo de Separação</div>
+        <div class="step"><div class="n">1</div><p>Selecione o <strong>Vendedor</strong> no dropdown (ex: WCLAYTON, MATRIZ)</p></div>
+        <div class="step"><div class="n">2</div><p>Selecione a <strong>Rota</strong> (ex: CATALÃO, JATAÍ) ou deixe "Todas as rotas"</p></div>
+        <div class="step"><div class="n">3</div><p>Clique em <strong>Consultar</strong> para carregar os pedidos pendentes</p></div>
+        <div class="step"><div class="n">4</div><p>Selecione o pedido e inicie a <strong>separação item por item</strong></p></div>
+        <div class="step"><div class="n">5</div><p>Ao finalizar, o status muda para <span class="badge bg" style="margin:0 3px">SEPARADO</span></p></div>
+        <div class="tip"><strong>⚠️ Atenção</strong><p>Se não houver pedidos aguardando, o sistema exibe "Nenhum pedido encontrado" — isso é normal fora do horário de pico.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- SLIDE 6: REPOSIÇÃO / PEDIDOS -->
+<div class="slide" id="s6">
+  <div class="bg-grid"></div>
+  <div class="slide-header">
+    <span class="mod-tag">MÓDULO 3</span>
+    <h2>Reposição — Lista de Pedidos</h2>
+  </div>
+  <div class="content">
+    <div class="intro"><p>Exibe todos os pedidos do sistema com <strong style="color:#f5c518">busca e filtros avançados</strong>. Permite localizar rapidamente qualquer pedido por número, cliente, vendedor, rota, status ou tipo.</p></div>
+    <div class="grid2">
+      <div>
+        <div class="mockup">
+          <div class="mockup-hd"><span>Lista de Pedidos</span></div>
+          <div class="mockup-body">
+            <div class="field" style="width:100%;margin-bottom:10px;padding:8px 12px">🔍 Buscar por nº, cliente, vendedor, rota, status ou tipo...</div>
+            <div style="display:flex;gap:8px;margin-bottom:12px">
+              <div class="field" style="font-size:.72rem">Todos os status ▾</div>
+              <div class="field" style="font-size:.72rem">Todos os tipos ▾</div>
+            </div>
+            <div style="border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:2px;margin-bottom:8px;border-left:3px solid #22c55e">
+              <div style="display:flex;gap:6px;margin-bottom:6px">
+                <span class="badge bg" style="font-size:.68rem;margin:0">SEPARADO</span>
+                <span class="badge bb" style="font-size:.68rem;margin:0">PRÉ-VENDA</span>
+                <span style="margin-left:auto;font-size:.72rem;color:rgba(255,255,255,.4)">13/05 13:09</span>
+              </div>
+              <div style="font-size:.82rem;font-weight:700;color:#fff">Cliente #62007917</div>
+              <div style="display:flex;gap:6px;margin-top:5px;font-size:.72rem;color:rgba(255,255,255,.5)">
+                <span>👤 Jeferson</span><span>🚗 WCLAYTON · CATALÃO</span><span>📦 1 item · 2un</span>
+              </div>
+              <div style="text-align:right;font-size:.9rem;font-weight:800;color:#f5c518">R$ 96,00</div>
+            </div>
+            <div style="border:1px solid rgba(255,255,255,.06);padding:10px;border-radius:2px;border-left:3px solid #a855f7;opacity:.7">
+              <div style="font-size:.78rem;font-weight:700;color:#fff">Outro pedido...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.8rem;color:#f5c518;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Tipos de Pedido</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+          <div class="card" style="padding:12px 16px;display:flex;align-items:center;gap:12px">
+            <span class="badge bb" style="margin:0;white-space:nowrap">PRÉ-VENDA</span>
+            <p style="margin:0">Pedidos de venda padrão realizados pelo vendedor</p>
+          </div>
+          <div class="card" style="padding:12px 16px;display:flex;align-items:center;gap:12px">
+            <span class="badge by" style="margin:0;white-space:nowrap">BONIFICAÇÃO</span>
+            <p style="margin:0">Produtos enviados como bonificação ao cliente</p>
+          </div>
+          <div class="card" style="padding:12px 16px;display:flex;align-items:center;gap:12px">
+            <span class="badge bp" style="margin:0;white-space:nowrap">REPOSIÇÃO</span>
+            <p style="margin:0">Reposição de produtos no caminhão do vendedor</p>
+          </div>
+        </div>
+        <div class="tip"><strong>🎯 Filtros Combinados</strong><p>Use os filtros de <strong>Status</strong> (Separado, Expedição, Cancelado) e <strong>Tipo</strong> juntos para refinar a busca. O campo de texto busca em todos os campos simultaneamente.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: CONFERÊNCIA -->
+<div class="slide" id="s7">
+  <div class="bg-grid"></div>
+  <div class="slide-header">
+    <span class="mod-tag">MÓDULO 4</span>
+    <h2>Conferência — Validação de Carga</h2>
+  </div>
+  <div class="content">
+    <div class="intro"><p>Histórico e acompanhamento de conferências realizadas. O estoquista confere fisicamente os itens separados antes do carregamento, garantindo a <strong style="color:#f5c518">integridade da carga</strong>.</p></div>
+    <div class="grid2">
+      <div>
+        <div class="mockup">
+          <div class="mockup-hd"><span>Conferência — Lista</span></div>
+          <div class="mockup-body">
+            <div class="frow" style="margin-bottom:10px">
+              <div class="field">👤 Todos os vendedores ▾</div>
+              <div class="field">🚗 Todas as rotas ▾</div>
+            </div>
+            <div style="border:1px solid rgba(255,255,255,.08);padding:10px;border-radius:2px;margin-bottom:6px">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div>
+                  <div style="font-size:.8rem;font-weight:700;color:#fff">Reposição de Caminhão</div>
+                  <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:3px">👤 WCLAYTON • 🚗 MINEIROS • 📅 13/05 09:22 • 📦 2 itens</div>
+                </div>
+                <span class="badge bg" style="margin:0;white-space:nowrap">Concluída</span>
+              </div>
+            </div>
+            <div style="border:1px solid rgba(255,255,255,.08);padding:10px;border-radius:2px;margin-bottom:6px;opacity:.75">
+              <div style="font-size:.8rem;font-weight:700;color:#fff">ANA KAROLINA MACHADO SOUZA</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:3px">👤 WCLAYTON • 🚗 CATALÃO • 📅 12/05 08:20</div>
+            </div>
+            <div style="text-align:right;margin-top:8px">
+              <div style="display:inline-block;background:#f5c518;color:#0d1526;padding:5px 12px;font-size:.74rem;font-weight:900">+ Nova Conferência</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flow">
+        <div style="font-size:.8rem;color:#f5c518;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Como Conferir</div>
+        <div class="step"><div class="n">1</div><p>Clique em <strong>+ Nova Conferência</strong></p></div>
+        <div class="step"><div class="n">2</div><p>Selecione o vendedor e a rota da carga</p></div>
+        <div class="step"><div class="n">3</div><p>Escaneie ou selecione os itens da separação</p></div>
+        <div class="step"><div class="n">4</div><p>Valide as quantidades físicas vs. sistema</p></div>
+        <div class="step"><div class="n">5</div><p>Finalize — status muda para <span class="badge bg" style="margin:0 3px">Concluída</span></p></div>
+        <div class="tip"><strong>📋 Tipos de Conferência</strong><p>Suporta <strong>Reposição de Caminhão</strong> (estoque do veículo) e conferência por <strong>Cliente Final</strong> (pedidos individuais).</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- SLIDE 8: EXPEDIÇÃO E DEVOLUÇÕES -->
+<div class="slide" id="s8">
+  <div class="bg-grid"></div>
+  <div class="slide-header">
+    <span class="mod-tag">MÓDULOS 5 e 6</span>
+    <h2>Expedição de Rota & Devoluções</h2>
+  </div>
+  <div class="content">
+    <div class="grid2">
+      <div>
+        <div style="font-size:.8rem;color:#f5c518;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🚚 Expedição de Rota</div>
+        <div class="intro" style="margin-bottom:12px"><p>Carregamento dos pedidos conferidos no caminhão. Cada expedição tem código único, rota, datas e status.</p></div>
+        <div class="mockup">
+          <div class="mockup-hd"><span>Expedições Ativas</span></div>
+          <div class="mockup-body">
+            <div class="field" style="width:100%;margin-bottom:8px">🔍 Buscar por rota ou vendedor...</div>
+            <div style="border:1px solid rgba(34,197,94,.3);padding:10px;border-radius:2px;margin-bottom:6px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-bottom:3px">#739A1C4E</div>
+                  <div style="font-size:.88rem;font-weight:800;color:#fff">MINEIROS</div>
+                  <div style="font-size:.72rem;color:rgba(255,255,255,.5)">👤 WCLAYTON • 📅 12/05 – 12/05</div>
+                </div>
+                <span class="badge bg" style="margin:0">FINALIZADA</span>
+              </div>
+            </div>
+            <div style="border:1px solid rgba(255,255,255,.08);padding:10px;border-radius:2px;opacity:.7">
+              <div style="font-size:.88rem;font-weight:700;color:#fff">CATALÃO</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.5)">👤 WCLAYTON • FINALIZADA</div>
+            </div>
+            <div style="text-align:right;margin-top:10px">
+              <div style="display:inline-block;background:#f5c518;color:#0d1526;padding:5px 12px;font-size:.74rem;font-weight:900">+ Nova Expedição</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.8rem;color:#f5c518;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🔄 Devoluções de Caminhão</div>
+        <div class="intro" style="margin-bottom:12px"><p>Registra produtos retornados no caminhão após a rota. Integrado às devoluções de clientes.</p></div>
+        <div class="mockup">
+          <div class="mockup-hd"><span>Devoluções Registradas</span></div>
+          <div class="mockup-body">
+            <div class="frow" style="margin-bottom:10px">
+              <div class="field">Todos os vendedores ▾</div>
+              <div class="field">Todos os status ▾</div>
+            </div>
+            <div style="border:1px solid rgba(239,68,68,.3);padding:10px;border-radius:2px;margin-bottom:6px">
+              <div style="display:flex;justify-content:space-between">
+                <div>
+                  <div style="font-size:.88rem;font-weight:800;color:#fff">JATAÍ</div>
+                  <div style="font-size:.72rem;color:rgba(255,255,255,.5)">👤 WCLAYTON • 3 itens • #23</div>
+                </div>
+                <span class="badge br" style="margin:0">Fechado</span>
+              </div>
+            </div>
+            <div style="text-align:right;margin-top:10px">
+              <div style="display:inline-block;background:#f5c518;color:#0d1526;padding:5px 12px;font-size:.74rem;font-weight:900">+ Nova Devolução</div>
+            </div>
+          </div>
+        </div>
+        <div class="tip" style="margin-top:10px"><strong>⚡ 6 carregados</strong><p>O indicador "N carregados" no topo mostra pendências a processar no momento.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: ENTRADAS E CONTAGEM -->
+<div class="slide" id="s9">
+  <div class="bg-grid"></div>
+  <div class="slide-header">
+    <span class="mod-tag">MÓDULOS 7 e 8</span>
+    <h2>Entradas de Estoque & Contagem</h2>
+  </div>
+  <div class="content">
+    <div class="grid2">
+      <div>
+        <div style="font-size:.8rem;color:#f5c518;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📥 Entradas de Estoque</div>
+        <div class="intro" style="margin-bottom:12px"><p>Registra a entrada de produtos no estoque geral por empresa/filial.</p></div>
+        <div class="mockup">
+          <div class="mockup-hd"><span>Entradas Registradas</span></div>
+          <div class="mockup-body">
+            <div style="border:1px solid rgba(245,197,24,.3);padding:10px;border-radius:2px;margin-bottom:6px">
+              <div style="display:flex;justify-content:space-between">
+                <div>
+                  <div style="font-size:.88rem;font-weight:800;color:#fff">GOIAS</div>
+                  <div style="font-size:.72rem;color:rgba(255,255,255,.5)">Criado 12/05 • Entrada: 12/05 • 1 item</div>
+                </div>
+                <span class="badge by" style="margin:0">PENDENTE</span>
+              </div>
+            </div>
+            <div class="flow" style="gap:0;margin-top:12px">
+              <div class="step"><div class="n">1</div><p>Clique em <strong>+ Nova Entrada</strong></p></div>
+              <div class="step"><div class="n">2</div><p>Informe empresa, data e produtos</p></div>
+              <div class="step"><div class="n">3</div><p>Confirme para lançar no estoque</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.8rem;color:#f5c518;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🔢 Contagem de Estoque</div>
+        <div class="intro" style="margin-bottom:12px"><p>Comparação entre quantidade física e saldo no sistema. Essencial para auditorias e ajustes de inventário.</p></div>
+        <div class="mockup">
+          <div class="mockup-hd"><span>Contagens Realizadas</span></div>
+          <div class="mockup-body">
+            <div style="border:1px solid rgba(245,197,24,.3);padding:10px;border-radius:2px;margin-bottom:6px">
+              <div style="display:flex;justify-content:space-between">
+                <div>
+                  <div style="font-size:.88rem;font-weight:800;color:#fff">GOIAS</div>
+                  <div style="font-size:.72rem;color:rgba(255,255,255,.5)">Criado 12/05 • Data: 12/05 • 1 item</div>
+                </div>
+                <span class="badge by" style="margin:0">ABERTA</span>
+              </div>
+            </div>
+            <div class="tip" style="margin-top:10px"><strong>📊 Status da Contagem</strong><p><span class="badge by" style="margin:0 3px">ABERTA</span> em andamento • <span class="badge bg" style="margin:0 3px">FINALIZADA</span> concluída e confirmada</p></div>
+          </div>
+        </div>
+        <div class="tip" style="margin-top:10px"><strong>💼 13 carregados</strong><p>Indica contagens pendentes de processamento. Sempre finalize contagens abertas antes de iniciar novas.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- SLIDE 10: SAÍDAS, TRANSFERÊNCIAS E ROMANEIO -->
+<div class="slide" id="s10">
+  <div class="bg-grid"></div>
+  <div class="slide-header">
+    <span class="mod-tag">MÓDULOS 9, 10 e 11</span>
+    <h2>Saídas, Transferências & Romaneio</h2>
+  </div>
+  <div class="content">
+    <div class="grid3">
+      <div>
+        <div style="font-size:.78rem;color:#f5c518;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📤 Saídas Diversas</div>
+        <div class="mockup">
+          <div class="mockup-hd"><span>Saídas</span></div>
+          <div class="mockup-body">
+            <div class="field" style="width:100%;margin-bottom:8px;font-size:.72rem">👤 Buscar funcionário, CPF ou donatário...</div>
+            <div style="display:flex;gap:6px;margin-bottom:10px">
+              <div class="field" style="font-size:.7rem">Todos os tipos ▾</div>
+              <div class="field" style="font-size:.7rem">Todas empresas ▾</div>
+            </div>
+            <div style="border:1px solid rgba(168,85,247,.3);padding:8px;border-radius:2px;margin-bottom:5px">
+              <span class="badge bp" style="margin:0 0 4px;font-size:.68rem">FUNCIONÁRIO</span>
+              <div style="font-size:.78rem;font-weight:700;color:#fff">OTAVIO JORDANE CANEDO</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,.5)">🏢 GOIAS • 📅 12/05 • 1 item • 3x</div>
+              <div style="text-align:right;font-size:.85rem;font-weight:800;color:#f5c518">R$ 1.440,00</div>
+            </div>
+          </div>
+        </div>
+        <div class="tip" style="margin-top:10px"><strong>📦 Tipos de Saída</strong><p>Funcionário, Doação (ex: entidades como NOSSA SRA CORAÇÃO DE MARIA) e distribuições internas.</p></div>
+      </div>
+      <div>
+        <div style="font-size:.78rem;color:#f5c518;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">↔️ Transferências</div>
+        <div class="mockup">
+          <div class="mockup-hd"><span>Transferências</span></div>
+          <div class="mockup-body">
+            <div class="field" style="width:100%;margin-bottom:8px;font-size:.72rem">Filtre por status ▾</div>
+            <div style="border:1px solid rgba(59,130,246,.3);padding:8px;border-radius:2px;margin-bottom:5px">
+              <span class="badge bb" style="margin:0 0 4px;font-size:.68rem">EM TRÂNSITO</span>
+              <div style="font-size:.85rem;font-weight:800;color:#fff">GOIAS → MATO GROSSO</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,.5)">📅 12/05 08:39 • #12 • 1 item</div>
+            </div>
+            <div style="border:1px solid rgba(245,197,24,.2);padding:8px;border-radius:2px;opacity:.7">
+              <span class="badge by" style="margin:0 0 3px;font-size:.68rem">AGUARDANDO</span>
+              <div style="font-size:.8rem;font-weight:700;color:#fff">GOIAS → MATRIZ</div>
+            </div>
+          </div>
+        </div>
+        <div class="tip" style="margin-top:10px"><strong>🔄 Status</strong><p><span class="badge by" style="margin:0 2px">AGUARDANDO</span> aguarda confirmação • <span class="badge bb" style="margin:0 2px">EM TRÂNSITO</span> em transferência</p></div>
+      </div>
+      <div>
+        <div style="font-size:.78rem;color:#f5c518;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📄 Romaneio de Entrega</div>
+        <div class="mockup">
+          <div class="mockup-hd"><span>Gerar Romaneio</span></div>
+          <div class="mockup-body">
+            <div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-bottom:6px">EXPEDIÇÃO</div>
+            <div class="field" style="width:100%;margin-bottom:8px;font-size:.72rem">🔍 Buscar por vendedor ou rota...</div>
+            <div style="text-align:right;margin-bottom:14px">
+              <div style="display:inline-block;background:rgba(100,116,139,.4);color:rgba(255,255,255,.5);padding:6px 14px;font-size:.75rem">📋 Gerar Romaneio</div>
+            </div>
+            <div style="background:rgba(245,197,24,.07);border:1px solid rgba(245,197,24,.25);padding:10px;border-radius:2px">
+              <div style="font-size:.75rem;color:#f5c518;font-weight:700;margin-bottom:5px">Como funciona</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.65);line-height:1.5">Lista todos os pedidos da expedição agrupados por cliente. Documento pode ser impresso e assinado pelo estoquista e vendedor.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: REIMPR. ETIQUETA E QR CODE -->
+<div class="slide" id="s11">
+  <div class="bg-grid"></div>
+  <div class="slide-header">
+    <span class="mod-tag">MÓDULOS 12 e FERRAMENTA</span>
+    <h2>Reimpressão de Etiqueta & QR Code</h2>
+  </div>
+  <div class="content">
+    <div class="grid2">
+      <div>
+        <div style="font-size:.8rem;color:#f5c518;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🏷️ Reimpressão de Etiquetas</div>
+        <div class="intro" style="margin-bottom:12px"><p>Permite reimprimir etiquetas de pedidos já separados. Útil quando a etiqueta original é perdida ou danificada.</p></div>
+        <div class="mockup">
+          <div class="mockup-hd"><span>Etiquetas Disponíveis</span></div>
+          <div class="mockup-body">
+            <div style="border:1px solid rgba(34,197,94,.3);padding:10px;border-radius:2px;margin-bottom:6px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="width:36px;height:36px;border-radius:50%;background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);display:flex;align-items:center;justify-content:center;color:#f5c518;font-size:1rem">👤</div>
+                  <div>
+                    <div style="font-size:.82rem;font-weight:700;color:#fff">ALLYNE JHENNEFER NORONHA</div>
+                    <div style="font-size:.7rem;color:rgba(255,255,255,.5)">📅 13/05 13:10 • 1 item • #111</div>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="badge bg" style="margin:0">Separado</span>
+                  <div style="background:#f5c518;color:#0d1526;padding:4px 12px;font-size:.72rem;font-weight:900">Reimprimir</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flow" style="gap:6px;margin-top:12px">
+          <div class="step"><div class="n">1</div><p>Localize o pedido na lista</p></div>
+          <div class="step"><div class="n">2</div><p>Clique em <strong>Reimprimir</strong></p></div>
+          <div class="step"><div class="n">3</div><p>A etiqueta é gerada e enviada para impressão</p></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.8rem;color:#f5c518;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📷 Ler QR Code</div>
+        <div class="intro" style="margin-bottom:12px"><p>Ferramenta de leitura de QR Code no chão de fábrica. Agiliza a separação e conferência sem necessidade de digitação manual.</p></div>
+        <div class="mockup" style="min-height:180px">
+          <div class="mockup-hd"><span>Leitor QR Code</span></div>
+          <div class="mockup-body" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px">
+            <div style="width:100px;height:100px;border:3px solid #f5c518;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:16px">
+              <div style="position:absolute;top:-3px;left:-3px;width:18px;height:18px;border-top:3px solid #f5c518;border-left:3px solid #f5c518;background:transparent"></div>
+              <div style="position:absolute;bottom:-3px;right:-3px;width:18px;height:18px;border-bottom:3px solid #f5c518;border-right:3px solid #f5c518;background:transparent"></div>
+              <div style="font-size:2.5rem">📷</div>
+            </div>
+            <div style="font-size:.82rem;color:rgba(255,255,255,.6);text-align:center">Aponte a câmera para o QR Code do pedido</div>
+          </div>
+        </div>
+        <div class="tip" style="margin-top:12px"><strong>⚡ Agilidade no Chão de Fábrica</strong><p>Use o QR Code para abrir pedidos instantaneamente durante a separação e conferência. Elimina erros de digitação.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- SLIDE 12: FLUXO COMPLETO -->
+<div class="slide" id="s12">
+  <div class="bg-grid"></div>
+  <div class="slide-header">
+    <span class="mod-tag">CICLO COMPLETO</span>
+    <h2>Fluxo de Vida do Pedido</h2>
+  </div>
+  <div class="content">
+    <div class="intro"><p>Um pedido percorre diferentes módulos do sistema. Entender esse fluxo é essencial para operar com eficiência no chão de fábrica.</p></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 0;gap:8px">
+      <div style="text-align:center;flex:1">
+        <div style="background:rgba(245,197,24,.15);border:1px solid rgba(245,197,24,.5);padding:14px 8px;border-radius:3px">
+          <div style="font-size:1.4rem;margin-bottom:6px">📋</div>
+          <div style="font-size:.78rem;font-weight:700;color:#f5c518">CRIAÇÃO</div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.55);margin-top:3px">Pedido gerado pelo vendedor (Pré-Venda)</div>
+        </div>
+      </div>
+      <div style="color:#f5c518;font-size:1.2rem;font-weight:900">→</div>
+      <div style="text-align:center;flex:1">
+        <div style="background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.5);padding:14px 8px;border-radius:3px">
+          <div style="font-size:1.4rem;margin-bottom:6px">📦</div>
+          <div style="font-size:.78rem;font-weight:700;color:#60a5fa">SEPARAÇÃO</div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.55);margin-top:3px">Estoquista separa os produtos físicos</div>
+        </div>
+      </div>
+      <div style="color:#f5c518;font-size:1.2rem;font-weight:900">→</div>
+      <div style="text-align:center;flex:1">
+        <div style="background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.5);padding:14px 8px;border-radius:3px">
+          <div style="font-size:1.4rem;margin-bottom:6px">✅</div>
+          <div style="font-size:.78rem;font-weight:700;color:#c084fc">CONFERÊNCIA</div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.55);margin-top:3px">Confere itens antes do carregamento</div>
+        </div>
+      </div>
+      <div style="color:#f5c518;font-size:1.2rem;font-weight:900">→</div>
+      <div style="text-align:center;flex:1">
+        <div style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.5);padding:14px 8px;border-radius:3px">
+          <div style="font-size:1.4rem;margin-bottom:6px">🚚</div>
+          <div style="font-size:.78rem;font-weight:700;color:#22c55e">EXPEDIÇÃO</div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.55);margin-top:3px">Carregamento no caminhão por rota</div>
+        </div>
+      </div>
+      <div style="color:#f5c518;font-size:1.2rem;font-weight:900">→</div>
+      <div style="text-align:center;flex:1">
+        <div style="background:rgba(245,197,24,.15);border:1px solid rgba(245,197,24,.5);padding:14px 8px;border-radius:3px">
+          <div style="font-size:1.4rem;margin-bottom:6px">📄</div>
+          <div style="font-size:.78rem;font-weight:700;color:#f5c518">ROMANEIO</div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.55);margin-top:3px">Documento assinado para entrega</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:10px">
+      <div class="card" style="padding:14px">
+        <h3>📊 Indicadores do Dashboard</h3>
+        <p>Monitore o ciclo em tempo real: quantos pedidos estão em cada etapa do fluxo.</p>
+      </div>
+      <div class="card" style="padding:14px">
+        <h3>⚠️ Cancelamentos</h3>
+        <p>Pedidos podem ser cancelados a qualquer momento. Verifique regularmente o módulo de Cancelamentos.</p>
+      </div>
+      <div class="card" style="padding:14px">
+        <h3>🔄 Devoluções Pós-Rota</h3>
+        <p>Após a entrega, registre devoluções no módulo específico para manter o estoque atualizado.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 13: DICAS E BOAS PRÁTICAS -->
+<div class="slide" id="s13">
+  <div class="bg-grid"></div>
+  <div class="slide-header">
+    <span class="mod-tag">BOAS PRÁTICAS</span>
+    <h2>Dicas Essenciais para o Dia a Dia</h2>
+  </div>
+  <div class="content">
+    <div class="grid2">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card" style="padding:16px;border-left:3px solid #f5c518">
+          <h3>⚡ Use o QR Code</h3>
+          <p>Sempre que possível, use a ferramenta "Ler QR Code" para abrir pedidos. É mais rápido e elimina erros de digitação no fluxo de separação.</p>
+        </div>
+        <div class="card" style="padding:16px;border-left:3px solid #22c55e">
+          <h3>📱 Acompanhe o Dashboard</h3>
+          <p>Verifique o Dashboard no início do turno. Os contadores mostram exatamente o que precisa ser feito: pedidos aguardando e em andamento.</p>
+        </div>
+        <div class="card" style="padding:16px;border-left:3px solid #60a5fa">
+          <h3>🔍 Filtros na Separação</h3>
+          <p>Use o filtro de Rota para focar em uma área de cada vez. Separe todas as rotas de um vendedor antes de passar para o próximo.</p>
+        </div>
+        <div class="card" style="padding:16px;border-left:3px solid #c084fc">
+          <h3>✅ Confirme a Conferência</h3>
+          <p>Nunca pule a etapa de Conferência. Ela garante que o que foi separado é exatamente o que será carregado no caminhão.</p>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card" style="padding:16px;border-left:3px solid #f87171">
+          <h3>❌ Cancelamentos Urgentes</h3>
+          <p>Monitore o módulo de Cancelamentos. Um pedido cancelado que ainda não foi processado pode causar inconsistência no estoque.</p>
+        </div>
+        <div class="card" style="padding:16px;border-left:3px solid #f5c518">
+          <h3>📦 Entradas Imediatas</h3>
+          <p>Registre entradas de estoque no momento da chegada dos produtos. O contador "carregados" indica itens pendentes de lançamento.</p>
+        </div>
+        <div class="card" style="padding:16px;border-left:3px solid #22c55e">
+          <h3>🏷️ Etiquetas</h3>
+          <p>Se uma etiqueta for perdida, use "Reimpr. Etiqueta" imediatamente. Nunca separe produto sem identificação.</p>
+        </div>
+        <div class="card" style="padding:16px;border-left:3px solid #60a5fa">
+          <h3>📊 Contagem Periódica</h3>
+          <p>Realize contagens de estoque regularmente. Compare o físico com o sistema para identificar divergências antes que se acumulem.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- SLIDE 14: ENCERRAMENTO -->
+<div class="slide" id="s14">
+  <div class="bg-grid"></div>
+  <div class="circuit"></div>
+  <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,rgba(13,21,38,1) 0%,rgba(22,32,64,1) 100%)"></div>
+  <div style="position:relative;z-index:2;text-align:center;max-width:700px;padding:40px">
+    <div style="margin-bottom:30px">
+      <div style="display:inline-flex;align-items:center;gap:12px;background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);padding:10px 24px;border-radius:2px">
+        <span style="color:#f5c518;font-size:1.3rem">⚡</span>
+        <span style="color:#f5c518;font-weight:700;font-size:.9rem;letter-spacing:1.5px;text-transform:uppercase">Sistema AdriLar</span>
+      </div>
+    </div>
+    <div class="cover-title neon-box" style="border:2px solid #f5c518;padding:40px 55px">
+      <h1 class="main" style="font-size:2.8rem">Pronto para<br>Operar!</h1>
+      <p class="cover-sub" style="font-size:1.1rem;margin-top:14px">Você agora conhece todos os módulos do<br>Sistema AdriLar de Estoque e Separação.</p>
+    </div>
+    <div style="display:flex;justify-content:center;gap:30px;margin-top:30px">
+      <div style="text-align:center">
+        <div style="font-size:2rem;font-weight:900;color:#f5c518">13</div>
+        <div style="font-size:.72rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px">Módulos</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,.15)"></div>
+      <div style="text-align:center">
+        <div style="font-size:2rem;font-weight:900;color:#f5c518">100%</div>
+        <div style="font-size:.72rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px">Documentado</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,.15)"></div>
+      <div style="text-align:center">
+        <div style="font-size:2rem;font-weight:900;color:#f5c518">2026</div>
+        <div style="font-size:.72rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px">Versão</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAVEGAÇÃO -->
+<div class="nav">
+  <button onclick="changeSlide(-1)">← Anterior</button>
+  <button onclick="changeSlide(1)">Próximo →</button>
+</div>
+<div class="ctr" id="ctr">1 / 14</div>
+
+<script>
+let cur = 1;
+const total = 14;
+
+function changeSlide(dir) {
+  const next = cur + dir;
+  if (next < 1 || next > total) return;
+  document.getElementById('s' + cur).classList.remove('active');
+  cur = next;
+  document.getElementById('s' + cur).classList.add('active');
+  document.getElementById('ctr').textContent = cur + ' / ' + total;
+  document.getElementById('pbar').style.width = (cur / total * 100) + '%';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+  if (e.key === 'ArrowLeft') changeSlide(-1);
+});
+
+// Init
+document.getElementById('pbar').style.width = (1/total*100) + '%';
+</script>
+</body>
+</html>
